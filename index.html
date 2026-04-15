@@ -3,139 +3,188 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Stellar Seat Booking</title>
+    <title>ChaiCode Cinema – Book My Ticket</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap");
-      body {
-        font-family: "Outfit", sans-serif;
-        background-color: #0f172a;
-        color: #f8fafc;
-      }
+      body { font-family: "Outfit", sans-serif; background-color: #0f172a; color: #f8fafc; }
     </style>
   </head>
-  <body
-    class="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
-  >
-    <div
-      class="max-w-7xl w-full bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-2xl p-10 border border-slate-700/50"
-    >
-      <div class="text-center mb-10">
-        <h1
-          class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-4 tracking-tight"
-        >
-          ChaiCode Cinema - Now Showing<br />
-          <br />
-          <span class="text-red-400">
-            <span class="font-bold">Dhurandhar The Revenge</span>
-          </span>
-        </h1>
-        <p class="text-slate-400 text-lg">Jassi ko ghar ki yaad kyu nhi aai?</p>
-      </div>
+  <body class="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
 
-      <div class="flex justify-center mb-10">
-        <div
-          class="bg-slate-900/50 rounded-full px-6 py-3 border border-slate-700 flex gap-8 items-center"
-        >
-          <div class="flex items-center gap-3">
-            <div
-              class="w-4 h-4 rounded-full bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.6)]"
-            ></div>
-            <span class="text-slate-300 font-medium tracking-wide"
-              >Available</span
-            >
+    <!-- ── Auth Modal ──────────────────────────────────────────────────────── -->
+    <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/90 backdrop-blur">
+      <div class="w-full max-w-md bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 p-8">
+        <h2 class="text-2xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-6">
+          ChaiCode Cinema
+        </h2>
+
+        <!-- ── Panel: Login / Register ─────────────────────────────────────── -->
+        <div id="panelAuth">
+          <!-- Tabs -->
+          <div class="flex rounded-xl overflow-hidden border border-slate-700 mb-6">
+            <button id="tabLogin" onclick="showTab('login')"
+              class="flex-1 py-2 text-sm font-semibold bg-emerald-600 text-white transition-colors">
+              Login
+            </button>
+            <button id="tabRegister" onclick="showTab('register')"
+              class="flex-1 py-2 text-sm font-semibold bg-slate-700 text-slate-300 transition-colors">
+              Register
+            </button>
           </div>
-          <div class="w-px h-6 bg-slate-700"></div>
-          <div class="flex items-center gap-3">
-            <div
-              class="w-4 h-4 rounded-full bg-rose-500/20 border border-rose-500/50"
-            ></div>
-            <span class="text-slate-400 font-medium tracking-wide">Booked</span>
-          </div>
+
+          <!-- Login form -->
+          <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4" novalidate>
+            <div>
+              <input id="loginEmail" type="email" placeholder="Email"
+                class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500" />
+              <p id="loginEmailErr" class="text-rose-400 text-xs mt-1 hidden"></p>
+            </div>
+            <div>
+              <input id="loginPassword" type="password" placeholder="Password"
+                class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500" />
+              <p id="loginPasswordErr" class="text-rose-400 text-xs mt-1 hidden"></p>
+            </div>
+            <p id="loginError" class="text-rose-400 text-sm hidden"></p>
+            <button type="submit"
+              class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors">
+              Login
+            </button>
+            <p class="text-center text-sm text-slate-400">
+              <button type="button" onclick="showPanel('forgot')"
+                class="text-emerald-400 hover:text-emerald-300 underline underline-offset-2 transition-colors">
+                Forgot password?
+              </button>
+            </p>
+          </form>
+
+          <!-- Register form -->
+          <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4 hidden" novalidate>
+            <div>
+              <input id="regName" type="text" placeholder="Full Name"
+                class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500" />
+              <p id="regNameErr" class="text-rose-400 text-xs mt-1 hidden"></p>
+            </div>
+            <div>
+              <input id="regEmail" type="email" placeholder="Email"
+                class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500" />
+              <p id="regEmailErr" class="text-rose-400 text-xs mt-1 hidden"></p>
+            </div>
+            <div>
+              <input id="regPassword" type="password" placeholder="Password (min 6 chars)"
+                class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500" />
+              <p id="regPasswordErr" class="text-rose-400 text-xs mt-1 hidden"></p>
+            </div>
+            <p id="registerError" class="text-rose-400 text-sm hidden"></p>
+            <button type="submit"
+              class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors">
+              Create Account
+            </button>
+          </form>
         </div>
+
+        <!-- ── Panel: Forgot Password ──────────────────────────────────────── -->
+        <div id="panelForgot" class="hidden">
+          <p class="text-slate-400 text-sm text-center mb-6">
+            Enter your email and we'll send you a reset link.
+          </p>
+          <form id="forgotForm" onsubmit="handleForgotPassword(event)" class="space-y-4" novalidate>
+            <div>
+              <input id="forgotEmail" type="email" placeholder="Email"
+                class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500" />
+              <p id="forgotEmailErr" class="text-rose-400 text-xs mt-1 hidden"></p>
+            </div>
+            <p id="forgotError"   class="text-rose-400 text-sm hidden"></p>
+            <p id="forgotSuccess" class="text-emerald-400 text-sm hidden"></p>
+            <button type="submit" id="forgotBtn"
+              class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors">
+              Send Reset Link
+            </button>
+            <p class="text-center text-sm">
+              <button type="button" onclick="showPanel('auth')"
+                class="text-slate-400 hover:text-slate-300 transition-colors">
+                &larr; Back to login
+              </button>
+            </p>
+          </form>
+        </div>
+
+        <!-- ── Panel: Reset Password ───────────────────────────────────────── -->
+        <div id="panelReset" class="hidden">
+          <p class="text-slate-400 text-sm text-center mb-6">
+            Choose a new password for your account.
+          </p>
+          <form id="resetForm" onsubmit="handleResetPassword(event)" class="space-y-4" novalidate>
+            <div>
+              <input id="resetPassword" type="password" placeholder="New password (min 6 chars)"
+                class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500" />
+              <p id="resetPasswordErr" class="text-rose-400 text-xs mt-1 hidden"></p>
+            </div>
+            <div>
+              <input id="resetConfirm" type="password" placeholder="Confirm new password"
+                class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500" />
+              <p id="resetConfirmErr" class="text-rose-400 text-xs mt-1 hidden"></p>
+            </div>
+            <p id="resetError"   class="text-rose-400 text-sm hidden"></p>
+            <p id="resetSuccess" class="text-emerald-400 text-sm hidden"></p>
+            <button type="submit" id="resetBtn"
+              class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors">
+              Reset Password
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Main App ────────────────────────────────────────────────────────── -->
+    <div id="app" class="max-w-7xl w-full hidden">
+      <!-- Header bar -->
+      <div class="flex items-center justify-between mb-6 bg-slate-800/80 rounded-2xl border border-slate-700/50 px-6 py-3">
+        <span class="text-slate-400 text-sm">Logged in as
+          <span id="userNameDisplay" class="text-emerald-400 font-semibold"></span>
+        </span>
+        <button onclick="logout()"
+          class="text-sm text-slate-400 hover:text-rose-400 border border-slate-600 hover:border-rose-500 px-4 py-1.5 rounded-lg transition-colors">
+          Logout
+        </button>
       </div>
 
-      <div class="flex justify-center">
-        <div
-          class="bg-slate-900/40 p-8 rounded-2xl border border-slate-700/50 shadow-inner"
-        >
-          <table
-            id="tbl"
-            class="border-separate border-spacing-4 mx-auto"
-          ></table>
+      <div class="bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-2xl p-10 border border-slate-700/50">
+        <div class="text-center mb-10">
+          <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-4 tracking-tight">
+            ChaiCode Cinema – Now Showing<br /><br />
+            <span class="text-red-400 font-bold">Dhurandhar The Revenge</span>
+          </h1>
+          <p class="text-slate-400 text-lg">Jassi ko ghar ki yaad kyu nhi aai?</p>
+        </div>
+
+        <div class="flex justify-center">
+          <div class="bg-slate-900/40 px-10 pt-10 pb-8 rounded-2xl border border-slate-700/50 shadow-inner w-full max-w-2xl">
+
+            <!-- Screen -->
+            <div class="flex flex-col items-center mb-10">
+              <div class="w-4/5 h-3 rounded-[50%] bg-gradient-to-r from-transparent via-white/70 to-transparent shadow-[0_0_40px_10px_rgba(255,255,255,0.15)]"></div>
+              <div class="w-3/5 h-5 bg-gradient-to-b from-white/8 to-transparent rounded-b-[50%]"></div>
+              <p class="text-slate-500 text-[11px] tracking-[0.5em] uppercase mt-1 font-medium">Screen</p>
+            </div>
+
+            <!-- Seating grid (built by JS) -->
+            <div id="seating" class="flex flex-col gap-3"></div>
+
+            <!-- Legend -->
+            <div class="mt-8 pt-6 border-t border-slate-700/40 flex flex-wrap justify-center gap-6 text-xs text-slate-400">
+              <span class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-emerald-500 inline-block"></span>Front Row – ₹100</span>
+              <span class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-cyan-500 inline-block"></span>Back Row – ₹150</span>
+              <span class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-rose-500/30 border border-rose-500/40 inline-block"></span>Booked</span>
+              <span class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-amber-500 inline-block"></span>Your Seat</span>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
 
-    <script>
-      async function run() {
-        const tbl = document.getElementById("tbl");
-        const res = await fetch("/seats");
-        const resarray = await res.json();
-        const j = resarray.sort((a, b) => a.id - b.id);
-        let tr;
-        for (let i = 0; i < j.length; i++) {
-          if (i % 8 === 0) tr = document.createElement("tr");
-
-          const td = document.createElement("td");
-
-          // Base aesthetic classes - added 'relative group' for tooltip positioning
-          const baseClasses =
-            "w-32 h-32 rounded-2xl text-center align-middle text-2xl font-bold transition-all duration-300 select-none relative group";
-
-          if (j[i].isbooked) {
-            td.className = `${baseClasses} bg-rose-500/10 text-rose-500/60 border border-rose-500/20 cursor-not-allowed`;
-            td.innerHTML = `
-                    <span class="relative z-10">${j[i].id}</span>
-                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2 bg-slate-900 border border-slate-700 text-sm text-slate-300 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap shadow-2xl z-50 pointer-events-none font-normal shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
-                        Booked by: <span class="font-bold text-white ml-1">${j[i].name}</span>
-                        <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-[6px] border-transparent border-t-slate-700"></div>
-                        <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] border-[5px] border-transparent border-t-slate-900"></div>
-                    </div>
-                `;
-          } else {
-            td.className = `${baseClasses} bg-emerald-500 text-white border-2 border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer hover:bg-emerald-400 hover:-translate-y-1.5 hover:shadow-[0_10px_25px_rgba(16,185,129,0.5)] active:scale-95 active:shadow-[0_0_10px_rgba(16,185,129,0.3)]`;
-            td.innerHTML = `<span class="relative z-10">${j[i].id}</span>`;
-          }
-
-          td.addEventListener("click", async function (e) {
-            const currentTd = e.currentTarget;
-            if (currentTd.classList.contains("cursor-not-allowed")) {
-              return; // Seat is already taken
-            }
-
-            try {
-              const id = j[i].id; // Safe from loop closure
-              const name = prompt("Enter your name");
-              if (!name) return;
-
-              const res = await fetch(`/${id}/${name}`, { method: "PUT" });
-              const data = await res.json();
-
-              if (data.error) {
-                alert("FAILED! Couldn't book! already booked.");
-              } else {
-                alert("Booked successfully!");
-                // Visually transition to booked state upon success
-                currentTd.className = `${baseClasses} bg-rose-500/10 text-rose-500/60 border border-rose-500/20 cursor-not-allowed`;
-                currentTd.innerHTML = `
-                            <span class="relative z-10">${id}</span>
-                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2 bg-slate-900 border border-slate-700 text-sm text-slate-300 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap shadow-2xl z-50 pointer-events-none font-normal shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
-                                Booked by: <span class="font-bold text-white ml-1">${name}</span>
-                                <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-[6px] border-transparent border-t-slate-700"></div>
-                                <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] border-[5px] border-transparent border-t-slate-900"></div>
-                            </div>
-                        `;
-              }
-            } catch (ex) {
-              alert("error booking " + ex);
-            }
-          });
-          tr.appendChild(td);
-          tbl.appendChild(tr);
-        }
-      }
-      run();
-    </script>
+    <script src="/main.js" defer></script>
   </body>
 </html>

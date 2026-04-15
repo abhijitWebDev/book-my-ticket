@@ -1,17 +1,25 @@
 {
-  "name": "booking-system",
+  "name": "book-my-ticket",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Cinema seat booking app built for the ChaiCode hackathon",
+  "main": "index.mjs",
+  "type": "module",
   "scripts": {
+    "start": "node index.mjs",
+    "dev": "node --env-file=.env --watch index.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["cinema", "booking", "express", "postgresql"],
+  "author": "abhijitWebDev",
   "license": "ISC",
   "dependencies": {
+    "autosendjs": "^1.0.3",
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "express": "^5.2.1",
+    "joi": "^18.1.2",
+    "jsonwebtoken": "^9.0.3",
     "pg": "^8.20.0"
   }
 }

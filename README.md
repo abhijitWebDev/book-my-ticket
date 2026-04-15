@@ -403,6 +403,71 @@ These are kept for backwards compatibility with the original starter code.
 
 ---
 
+## Database Models & Relations
+
+### Models
+
+**`users`**
+| Column | Type | Notes |
+|---|---|---|
+| `id` | SERIAL PK | |
+| `name` | VARCHAR(255) | |
+| `email` | VARCHAR(255) UNIQUE | |
+| `password_hash` | VARCHAR(255) | bcrypt, cost 12 |
+| `is_verified` | BOOLEAN | `false` until email verified |
+| `created_at` | TIMESTAMP | |
+
+**`seats`**
+| Column | Type | Notes |
+|---|---|---|
+| `id` | SERIAL PK | 1–20 |
+| `name` | VARCHAR(255) | Name of the user who booked |
+| `isbooked` | INT | `0` = free, `1` = booked |
+| `user_id` | INTEGER FK → `users.id` | `NULL` when free |
+
+**`refresh_tokens`**
+| Column | Type | Notes |
+|---|---|---|
+| `id` | SERIAL PK | |
+| `token_hash` | VARCHAR(64) UNIQUE | SHA-256 of the raw token |
+| `user_id` | INTEGER FK → `users.id` | CASCADE DELETE |
+| `expires_at` | TIMESTAMP | 7 days from issue |
+| `created_at` | TIMESTAMP | |
+
+**`verification_tokens`**
+| Column | Type | Notes |
+|---|---|---|
+| `id` | SERIAL PK | |
+| `token_hash` | VARCHAR(64) UNIQUE | SHA-256 of the raw token |
+| `user_id` | INTEGER FK → `users.id` | CASCADE DELETE |
+| `type` | VARCHAR(30) | `email_verification` or `password_reset` |
+| `expires_at` | TIMESTAMP | 24 h (email verify) / 1 h (reset) |
+| `created_at` | TIMESTAMP | |
+
+**`transactions`**
+| Column | Type | Notes |
+|---|---|---|
+| `id` | SERIAL PK | |
+| `user_id` | INTEGER FK → `users.id` | |
+| `seat_id` | INTEGER FK → `seats.id` | |
+| `amount` | INTEGER | Price in ₹ |
+| `card_last4` | CHAR(4) | |
+| `created_at` | TIMESTAMP | |
+
+---
+
+### Relations
+
+| From | To | Type | Notes |
+|---|---|---|---|
+| `users` | `seats` | One-to-one (soft) | A user can hold at most one seat at a time; enforced in app logic, not a DB unique constraint, so a user can rebook after releasing |
+| `users` | `refresh_tokens` | One-to-many | A user can have multiple active sessions; each token is single-use and deleted on rotation |
+| `users` | `verification_tokens` | One-to-many | Covers both `email_verification` and `password_reset` token types |
+| `users` | `transactions` | One-to-many | A full payment history per user |
+| `seats` | `transactions` | One-to-many | Tracks every booking made for a seat over time |
+
+---
+
 ## Authentication Flow
 
 ```
